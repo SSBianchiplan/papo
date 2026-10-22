@@ -2,6 +2,22 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
+## [Não lançado]
+
+### Segurança
+- API, worker e gateway (`pip-audit` sem avisos; eram 193 em 7 pacotes):
+  - FastAPI 0.115.14 → 0.149.0 e Starlette 0.46.2 → 1.9.0;
+  - certifi 2026.7.22 → 2026.10.19;
+  - Pillow 11.3.0 → 13.0.0;
+  - pypdf 5.9.0 → 6.21.2;
+  - Markdown 3.7 → 3.11.2;
+  - paramiko 3.5.1 → 5.1.0 (CVE-2026-44405);
+  - pip da imagem 24.3.1 → 26.2.2.
+- `api/constraints.txt` fixa todas as dependências da imagem, inclusive as transitivas, e o build passa a usá-lo.
+- Web: Vite 6.0.3 → 6.4.5 (esbuild 0.25; `npm audit` sem avisos).
+- Web servida por `nginxinc/nginx-unprivileged:1.30.6-alpine`, linha estável, sem root, com `server_tokens off`. Antes era `nginx:1.27.3-alpine`, sem suporte.
+- Dependências de desenvolvimento com versão exata.
+
 ## [1.0.0] — 2026-10-22
 Primeira publicação do código, igual ao que está no ar em papo.gplansis.com.
 

@@ -3,8 +3,8 @@ FROM python:3.12.8-slim AS base
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
 RUN useradd --system --uid 10001 --home /app papo
 WORKDIR /app
-COPY pyproject.toml ./
-RUN pip install --upgrade pip==24.3.1 && pip install .
+COPY pyproject.toml constraints.txt ./
+RUN pip install --upgrade pip==26.2.2 && pip install -c constraints.txt .
 COPY alembic.ini ./
 COPY migrations ./migrations
 COPY app ./app

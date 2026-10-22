@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - run: pip install -e ".[dev]" pytest-cov
+      - run: pip install -c constraints.txt -e ".[dev]"
       - run: |
           psql -h 127.0.0.1 -U postgres -c "CREATE ROLE papo_owner LOGIN PASSWORD 'owner'"
           psql -h 127.0.0.1 -U postgres -c "CREATE ROLE papo_app LOGIN PASSWORD 'app'"

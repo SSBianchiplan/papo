@@ -3,13 +3,14 @@ name = "papo-api"
 version = "1.0.0"
 requires-python = ">=3.12"
 dependencies = [
-  "fastapi==0.115.14",
+  "fastapi==0.149.0",
+  "starlette==1.9.0",
   "uvicorn[standard]==0.32.1",
   "pydantic==2.13.5",
   "pydantic-settings==2.15.0",
   "sqlalchemy[asyncio]==2.0.54",
   "asyncpg==0.30.0",
-  "psycopg[binary]==3.2.*",
+  "psycopg[binary]==3.2.13",
   "alembic==1.14.1",
   "redis==5.3.1",
   "arq==0.26.3",
@@ -17,19 +18,20 @@ dependencies = [
   "pyjwt[crypto]==2.15.1",
   "httpx==0.28.1",
   "minio==7.2.20",
-  "pypdf==5.9.0",
+  "pypdf==6.21.2",
   "python-docx==1.2.0",
   "openpyxl==3.1.5",
-  "pillow==11.3.0",
+  "pillow==13.0.0",
   "python-multipart==0.0.32",
-  "markdown==3.7",
+  "markdown==3.11.2",
   "pyyaml==6.0.2",
-  "paramiko==3.5.1",
+  "paramiko==5.1.0",
   "reportlab==4.2.5",
+  "certifi==2026.10.19",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest==8.*", "pytest-asyncio==0.26.*", "ruff==0.8.*", "mypy==1.13.*", "reportlab==4.*"]
+dev = ["pytest==8.4.2", "pytest-asyncio==0.26.0", "ruff==0.8.6", "mypy==1.13.0", "pytest-cov==7.1.0"]
 
 # Só o pacote "app": sem isto o flat-layout acha também "migrations" e o `pip install -e .` falha.
 # Com `find`, o build do Docker (que instala antes de copiar app/) continua funcionando.
