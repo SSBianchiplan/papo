@@ -1,0 +1,23 @@
+# Leitor do hub para o Papo (somente leitura). Uso numa VPS que não é a do Papo:
+#   cp .env.example .env (token e IP do Papo) ; ./gen-cert.sh <IP público desta VPS> ; docker compose up -d
+name: papo-hubreader
+services:
+  hubreader:
+    build: .
+    image: papo-hubreader:1.0.0
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 160m
+    cpus: 0.5
+    environment:
+      HUBREADER_TOKEN: ${HUBREADER_TOKEN}
+      HUBREADER_ALLOW_IPS: ${HUBREADER_ALLOW_IPS}
+      HUBREADER_ROOTS: opt=/hub/opt,www=/hub/www
+    ports: ["8743:8743"]
+    volumes:
+      - /opt:/hub/opt:ro
+      - /var/www:/hub/www:ro
+      - ./tls:/tls:ro
+    logging: { driver: json-file, options: { max-size: "10m", max-file: "3" } }

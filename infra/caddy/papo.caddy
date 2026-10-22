@@ -1,0 +1,44 @@
+# =============================================================================
+#  Papo — papo.gplansis.com (chat com agentes de IA que leem arquivos, PWA)
+#  Importado pelo /etc/caddy/Caddyfile. Bloco próprio: não toca em outro site.
+#  Stack Docker em /opt/papo (docker-compose.yml + docker-compose.hub.yml):
+#    web 127.0.0.1:8991 · api 127.0.0.1:8992 (inclui WebSocket /api/ws) · keycloak 127.0.0.1:8993 (/auth)
+#  CSP, cache e MIME vêm do nginx do contêiner web; aqui só TLS, HSTS, compressão e roteamento.
+# =============================================================================
+
+papo.gplansis.com {
+	import seguranca_hub
+	encode zstd gzip
+
+	handle /api/* {
+		request_body {
+			max_size 52MB
+		}
+		reverse_proxy 127.0.0.1:8992 {
+			transport http {
+				read_timeout 300s
+				write_timeout 300s
+			}
+		}
+	}
+
+	handle /auth/* {
+		# Console de administração e realm master do Keycloak: só das redes autorizadas.
+		# Fica dentro do handle: no nível do site o handle rodaria antes do respond e o bloqueio não valeria.
+		# Para liberar outro IP, acrescente-o aqui e rode `systemctl reload caddy`.
+		@kc_admin {
+			path /auth/admin* /auth/realms/master*
+			not remote_ip 127.0.0.1/32 203.0.113.10/32   # troque pelo IP de quem administra
+		}
+		respond @kc_admin "Acesso restrito" 403
+		reverse_proxy 127.0.0.1:8993
+	}
+
+	handle {
+		reverse_proxy 127.0.0.1:8991
+	}
+
+	log {
+		output file /var/log/caddy/papo.log
+	}
+}

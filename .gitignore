@@ -1,0 +1,54 @@
+# Segredos — nunca versionar (só .env.example)
+.env
+.env.*
+!.env.example
+hubreader/.env
+hubreader/tls/
+
+# Dados, dumps e backups
+backups/
+dados/
+data/
+*.dump
+*.sql.gz
+*.db
+*.sqlite
+*.bak
+*.bak*
+*-bak-*
+
+# Python
+**/__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+.coverage
+htmlcov/
+
+# Web
+web/node_modules/
+web/dist/
+web/public/config.json
+*.tsbuildinfo
+
+# Logs e temporários
+*.log
+*.tmp
+tmp/
+
+# Chaves e certificados
+*.pem
+*.key
+*.crt
+*.p12
+
+# SO / editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

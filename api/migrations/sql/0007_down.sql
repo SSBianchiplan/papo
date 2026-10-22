@@ -1,0 +1,4 @@
+ALTER TABLE app_user DROP COLUMN IF EXISTS is_admin;
+DROP TABLE IF EXISTS agent_hub;
+DROP TABLE IF EXISTS hub_file;
+DROP TABLE IF EXISTS hub_source;

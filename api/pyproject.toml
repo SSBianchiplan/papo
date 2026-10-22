@@ -1,0 +1,60 @@
+[project]
+name = "papo-api"
+version = "1.0.0"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi==0.115.14",
+  "uvicorn[standard]==0.32.1",
+  "pydantic==2.13.5",
+  "pydantic-settings==2.15.0",
+  "sqlalchemy[asyncio]==2.0.54",
+  "asyncpg==0.30.0",
+  "psycopg[binary]==3.2.*",
+  "alembic==1.14.1",
+  "redis==5.3.1",
+  "arq==0.26.3",
+  "anthropic==1.11.0",
+  "pyjwt[crypto]==2.15.1",
+  "httpx==0.28.1",
+  "minio==7.2.20",
+  "pypdf==5.9.0",
+  "python-docx==1.2.0",
+  "openpyxl==3.1.5",
+  "pillow==11.3.0",
+  "python-multipart==0.0.32",
+  "markdown==3.7",
+  "pyyaml==6.0.2",
+  "paramiko==3.5.1",
+  "reportlab==4.2.5",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==8.*", "pytest-asyncio==0.26.*", "ruff==0.8.*", "mypy==1.13.*", "reportlab==4.*"]
+
+# Só o pacote "app": sem isto o flat-layout acha também "migrations" e o `pip install -e .` falha.
+# Com `find`, o build do Docker (que instala antes de copiar app/) continua funcionando.
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.ruff]
+line-length = 160
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "UP", "I", "BLE"]
+ignore = ["B008"]   # Depends/File/Query em default é o idioma do FastAPI
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+ignore_missing_imports = true
+
+[tool.ruff.lint.per-file-ignores]
+"app/agent/tools.py" = ["E501"]   # docstrings das ferramentas são o texto enviado ao modelo

@@ -1,0 +1,123 @@
+/* Login do Papo — mesmos tokens do app (web/src/styles.css). Sobrepõe o tema clássico do Keycloak. */
+@font-face{font-family:"Manrope";font-weight:400;font-display:swap;src:url(../fonts/manrope-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Manrope";font-weight:600;font-display:swap;src:url(../fonts/manrope-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"Manrope";font-weight:700;font-display:swap;src:url(../fonts/manrope-latin-700-normal.woff2) format("woff2")}
+
+:root{
+  --bar:#12343B; --bar-ink:#E8F1EF; --bar-sub:#9DB9B4;
+  --accent:#1F8A70; --accent-hover:#197560; --accent-ink:#fff;
+  --bg:#F4F7F6; --panel:#FFFFFF; --line:#DDE5E3; --ink:#15211F; --sub:#5E6F6B;
+  --wall-dot:rgba(255,255,255,.06); --chip:#E9F2EF; --danger:#C2412D; --sys:#FFF4CC;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bar:#0F2226; --bar-ink:#E3EEEB; --bar-sub:#86A39E;
+    --accent:#2FA584; --accent-hover:#38b892; --bg:#0D1715; --panel:#132220; --line:#22332F;
+    --ink:#E4ECEA; --sub:#8FA39E; --wall-dot:rgba(255,255,255,.04); --chip:#1B2E2A; --sys:#3A3418;
+  }
+}
+
+html.login-pf, .login-pf body{
+  background:var(--bar) !important;
+  background-image:radial-gradient(var(--wall-dot) 1.2px,transparent 1.3px) !important;
+  background-size:18px 18px !important;
+  color:var(--ink);
+  font-family:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif !important;
+  min-height:100%;
+}
+.login-pf body :where(h1,h2,p,a,label,span,div,input,button,li):not(.fa):not([class*="fa-"]):not([class*="pficon"]){font-family:inherit}
+.login-pf-page{padding:max(40px,env(safe-area-inset-top)) 16px max(32px,env(safe-area-inset-bottom)) !important;display:flex;flex-direction:column;align-items:center;min-height:100vh;min-height:100dvh;box-sizing:border-box}
+
+/* cabeçalho: logo + nome, como a barra do app */
+#kc-header{margin:0 0 22px !important;padding:0 !important}
+#kc-header-wrapper{
+  display:flex;flex-direction:column;align-items:center;gap:10px;padding:0 !important;
+  font-size:30px !important;font-weight:700 !important;letter-spacing:-.02em !important;text-transform:none !important;
+  color:var(--bar-ink) !important;line-height:1.1 !important;white-space:normal !important;
+}
+#kc-header-wrapper::before{content:"";width:64px;height:64px;background:url(../img/logo.svg) center/contain no-repeat;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#kc-header-wrapper::after{content:"Agentes que leem seus arquivos";font-size:14px;font-weight:400;letter-spacing:0;color:var(--bar-sub)}
+
+/* cartão */
+.card-pf{
+  width:100%;max-width:420px !important;margin:0 auto !important;padding:26px 26px 22px !important;
+  background:var(--panel) !important;color:var(--ink);border:0 !important;border-top:0 !important;
+  border-radius:18px !important;box-shadow:0 18px 50px rgba(0,0,0,.28) !important;box-sizing:border-box;
+}
+.login-pf-header{margin-bottom:18px !important;padding:0 !important}
+#kc-page-title{font-size:21px !important;font-weight:700 !important;letter-spacing:-.01em;color:var(--ink) !important;margin:0 !important;text-align:left !important;padding:0 !important}
+#kc-content-wrapper{margin-top:0 !important}
+
+/* campos */
+.login-pf label, .pf-c-form__label, .pf-c-form__label-text, .control-label{color:var(--ink) !important;font-size:13px !important;font-weight:600 !important;margin-bottom:6px !important}
+.form-group{margin-bottom:16px !important}
+.pf-c-form-control, .form-control, .login-pf input[type=text], .login-pf input[type=password], .login-pf input[type=email]{
+  height:46px !important;width:100%;padding:10px 12px !important;font-size:16px !important;
+  background:var(--bg) !important;color:var(--ink) !important;
+  border:1px solid var(--line) !important;border-radius:10px !important;box-shadow:none !important;
+  transition:border-color .15s, box-shadow .15s;
+}
+.pf-c-form-control:hover{border-color:var(--sub) !important}
+.pf-c-form-control:focus, .form-control:focus{border-color:var(--accent) !important;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent) !important;outline:none !important}
+.pf-c-form-control[aria-invalid=true]{border-color:var(--danger) !important}
+.pf-c-input-group{display:flex;gap:0;align-items:stretch;background:transparent !important}
+.pf-c-input-group::before,.pf-c-input-group::after,.pf-c-form-control::after,.pf-c-form-control::before{display:none !important}
+.pf-c-input-group .pf-c-form-control{border-top-right-radius:0 !important;border-bottom-right-radius:0 !important}
+.pf-c-input-group .pf-c-button.pf-m-control{
+  background:var(--chip) !important;color:var(--sub) !important;border:1px solid var(--line) !important;border-left:0 !important;
+  border-radius:0 10px 10px 0 !important;min-width:46px;height:46px
+}
+.pf-c-input-group .pf-c-button.pf-m-control::after{display:none !important}
+#input-error, .kc-feedback-text, span[id^=input-error]{color:var(--danger) !important;font-size:12.5px !important;margin-top:4px;display:block}
+
+/* opções e links */
+#kc-form-options, .login-pf-settings{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin:2px 0 18px !important;font-size:13.5px}
+.checkbox label{font-weight:400 !important;color:var(--sub) !important;display:flex;align-items:center;gap:8px;margin:0 !important}
+.checkbox input[type=checkbox]{accent-color:var(--accent);width:17px;height:17px;margin:0 !important;position:static !important}
+.login-pf a, #kc-form-options a, #kc-registration a, .kc-login-tooltip a{color:var(--accent) !important;font-weight:600;text-decoration:none}
+.login-pf a:hover{text-decoration:underline}
+
+/* botões */
+.pf-c-button.pf-m-primary, .btn-primary, #kc-login, input[type=submit]{
+  height:48px !important;width:100%;border:0 !important;border-radius:12px !important;
+  background:var(--accent) !important;color:var(--accent-ink) !important;
+  font-size:15.5px !important;font-weight:700 !important;letter-spacing:.01em;box-shadow:none !important;cursor:pointer;transition:background .15s, transform .05s;
+}
+.pf-c-button.pf-m-primary:hover, #kc-login:hover{background:var(--accent-hover) !important}
+.pf-c-button.pf-m-primary:active, #kc-login:active{transform:translateY(1px)}
+.pf-c-button.pf-m-primary:focus-visible{outline:2px solid var(--accent) !important;outline-offset:2px}
+.pf-c-button.pf-m-secondary, .btn-default{
+  height:46px;border-radius:12px !important;background:var(--chip) !important;color:var(--ink) !important;border:0 !important;font-weight:600 !important
+}
+.pf-c-button::after{border:0 !important}
+#kc-form-buttons{margin-top:6px !important}
+
+/* alertas */
+.alert, .pf-c-alert{border-radius:10px !important;border:0 !important;box-shadow:none !important;padding:10px 12px !important;font-size:13.5px !important;margin-bottom:16px !important;background:var(--sys) !important;color:var(--ink) !important}
+.alert-error, .pf-c-alert.pf-m-danger{background:color-mix(in srgb,var(--danger) 14%,var(--panel)) !important;color:var(--ink) !important}
+.alert-success, .pf-c-alert.pf-m-success{background:var(--chip) !important}
+.pf-c-alert__icon, .alert .pficon{color:inherit !important}
+
+/* rodapé, idioma e outros */
+#kc-info, #kc-info-wrapper, .login-pf-signup{background:none !important;border:0 !important;color:var(--sub) !important;padding:14px 0 0 !important;text-align:center;font-size:13.5px}
+#kc-locale{position:absolute;top:max(14px,env(safe-area-inset-top));right:16px}
+#kc-locale-dropdown > a, #kc-current-locale-link{color:var(--bar-sub) !important;font-size:13px;font-weight:600}
+#kc-locale ul{background:var(--panel) !important;border:1px solid var(--line) !important;border-radius:10px !important;box-shadow:0 8px 24px rgba(0,0,0,.2) !important;padding:4px !important}
+#kc-locale ul li a{color:var(--ink) !important;border-radius:6px}
+#kc-locale ul li a:hover{background:var(--chip) !important}
+.login-pf-page .login-pf-header{position:static}
+#kc-attempted-username{font-weight:600}
+#reset-login{color:var(--accent) !important}
+.instruction{color:var(--sub);font-size:13.5px}
+hr{border-color:var(--line)}
+
+/* celular: o cartão ocupa a largura, sem perder o fundo da marca */
+@media (max-width:767px){
+  .login-pf body, html.login-pf{background:var(--bar) !important;background-image:radial-gradient(var(--wall-dot) 1.2px,transparent 1.3px) !important;background-size:18px 18px !important}
+  .login-pf-page{padding-top:max(58px,calc(env(safe-area-inset-top) + 44px)) !important}
+  #kc-header-wrapper{color:var(--bar-ink) !important;font-size:26px !important}
+  #kc-header-wrapper::before{width:56px;height:56px}
+  .card-pf{padding:22px 18px 18px !important;box-shadow:0 12px 36px rgba(0,0,0,.25) !important;border-radius:18px !important}
+  #kc-locale{top:max(10px,env(safe-area-inset-top))}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}

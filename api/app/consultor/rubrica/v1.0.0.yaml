@@ -1,0 +1,176 @@
+# Rubrica do Consultor de IA · SPEC-GPS-PAPO-CIA-001 §4 · Modelo de Camadas SPEC-GPS-CAMADAS-001 v1.0.0
+# IDs estáveis: critério removido vira obsoleto, nunca é reaproveitado.
+versao: 1.0.0
+modelo_camadas: 1.0.0
+estados: {ATENDE: 1.0, DECLARADO: 0.5, NAO_ATENDE: 0.0, LACUNA: 0.0}
+veredito:
+  limiar_pronta: 75
+criterios:
+  - id: N01
+    camada: nucleo
+    texto: O problema de negócio e a decisão apoiada estão descritos
+    peso: 3
+    critico: true
+    pergunta: Qual problema do dia a dia a proposta resolve, e que decisão ela ajuda alguém a tomar?
+    respostas_rapidas: ["Está claro e escrito", "Está claro só na conversa", "Não está claro", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: DECLARADO, 2: NAO_ATENDE, 3: LACUNA}
+  - id: N02
+    camada: nucleo
+    texto: Existe teste de sucesso com métrica e limiar
+    peso: 3
+    critico: true
+    pergunta: Como vocês vão saber que deu certo? Existe uma métrica com meta definida antes de implantar?
+    respostas_rapidas: ["Sim, métrica e meta definidas", "Só a métrica, sem meta", "Não existe", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: NAO_ATENDE, 2: NAO_ATENDE, 3: LACUNA}
+  - id: N03
+    camada: nucleo
+    texto: Há dono nomeado para falhas em produção
+    peso: 3
+    critico: true
+    pergunta: Quando o sistema errar em produção, quem responde por isso? Há uma pessoa nomeada?
+    respostas_rapidas: ["Sim, pessoa nomeada", "É uma área, sem pessoa", "Ninguém definido", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: NAO_ATENDE, 2: NAO_ATENDE, 3: LACUNA}
+  - id: N04
+    camada: nucleo
+    texto: Há baseline ou situação atual para comparação
+    peso: 2
+    critico: false
+    pergunta: Vocês sabem como o trabalho é feito hoje e quanto ele custa ou demora, para comparar depois?
+    respostas_rapidas: ["Sim, medido", "Temos uma estimativa", "Não temos", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: DECLARADO, 2: NAO_ATENDE, 3: LACUNA}
+  - id: N05
+    camada: nucleo
+    texto: Custo total estimado (licença, infraestrutura, operação)
+    peso: 1
+    critico: false
+    pergunta: A proposta mostra o custo total, incluindo licença, infraestrutura e operação depois de implantado?
+    respostas_rapidas: ["Sim, o custo total", "Só a licença ou o projeto", "Não mostra", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: NAO_ATENDE, 2: NAO_ATENDE, 3: LACUNA}
+  - id: C1.1
+    camada: 1
+    texto: Regras e exceções escritas e versionadas
+    peso: 2
+    critico: false
+    pergunta: As regras que o sistema segue estão escritas, com versão e com alguém responsável por alterá-las?
+    respostas_rapidas: ["Escritas e versionadas", "Escritas sem versão", "Só na cabeça de alguém", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: NAO_ATENDE, 2: NAO_ATENDE, 3: LACUNA}
+  - id: C1.2
+    camada: 1
+    texto: Comportamento definido para entrada fora das regras
+    peso: 2
+    critico: true
+    pergunta: Quando chega um caso que nenhuma regra cobre, o que o sistema faz?
+    respostas_rapidas: ["Para e pede um humano", "Segue com um padrão definido", "Não está definido", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: DECLARADO, 2: NAO_ATENDE, 3: LACUNA}
+  - id: C2.1
+    camada: 2
+    texto: Dados representam a operação real (período, turnos, lotes)
+    peso: 3
+    critico: true
+    pergunta: Os dados de treino cobrem a operação real, com turnos, lotes, sazonalidade e equipamentos de vocês?
+    respostas_rapidas: ["Sim, com dados da nossa operação", "Em parte", "Não, são dados genéricos", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: NAO_ATENDE, 2: NAO_ATENDE, 3: LACUNA}
+  - id: C2.2
+    camada: 2
+    texto: Separação treino e teste, sem vazamento
+    peso: 2
+    critico: false
+    pergunta: O modelo foi testado em dados separados dos de treino, de outro período?
+    respostas_rapidas: ["Sim, período diferente", "Separados, mesmo período", "Não houve separação", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: NAO_ATENDE, 2: NAO_ATENDE, 3: LACUNA}
+  - id: C2.3
+    camada: 2
+    texto: Métrica ponderada pelo custo de cada tipo de erro
+    peso: 2
+    critico: false
+    pergunta: A métrica leva em conta o custo diferente de um alarme falso e de uma falha não detectada?
+    respostas_rapidas: ["Sim", "Não, só acurácia geral", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: NAO_ATENDE, 2: LACUNA}
+  - id: C3.1
+    camada: 3
+    texto: Objetivo de treino explicado em termos de negócio
+    peso: 1
+    critico: false
+    pergunta: Alguém explicou, em termos do negócio, quais erros a rede neural foi treinada para evitar?
+    respostas_rapidas: ["Sim, revisado com a área", "Não", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: NAO_ATENDE, 2: LACUNA}
+  - id: C4.1
+    camada: 4
+    texto: Acurácia, latência e custo medidos no hardware alvo
+    peso: 2
+    critico: false
+    pergunta: Acurácia, tempo de resposta e custo foram medidos juntos, no equipamento onde o sistema vai rodar, com dados da planta?
+    respostas_rapidas: ["Sim, no hardware alvo", "Só em laboratório ou benchmark", "Não foram medidos", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: NAO_ATENDE, 2: NAO_ATENDE, 3: LACUNA}
+  - id: C4.2
+    camada: 4
+    texto: Plano de drift, reteste e retreino
+    peso: 2
+    critico: false
+    pergunta: O que acontece quando muda a câmera, a iluminação, a matéria-prima ou a condição de operação?
+    respostas_rapidas: ["Há plano de reteste e retreino", "Retreina quando der problema", "Não há plano", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: NAO_ATENDE, 2: NAO_ATENDE, 3: LACUNA}
+  - id: C5.1
+    camada: 5
+    texto: Conjunto de avaliação com casos do cliente
+    peso: 3
+    critico: true
+    pergunta: O sistema foi avaliado com casos reais de vocês, num conjunto montado antes, e não só com exemplos escolhidos?
+    respostas_rapidas: ["Sim, com casos nossos", "Só com exemplos do fornecedor", "Não foi avaliado", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: NAO_ATENDE, 2: NAO_ATENDE, 3: LACUNA}
+  - id: C5.2
+    camada: 5
+    texto: Factualidade com citação de fonte
+    peso: 2
+    critico: false
+    pergunta: As respostas do sistema citam a fonte (documento, página) de onde tiraram a informação?
+    respostas_rapidas: ["Sempre citam", "Às vezes", "Não citam", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: NAO_ATENDE, 2: NAO_ATENDE, 3: LACUNA}
+  - id: C5.3
+    camada: 5
+    texto: Ponto de revisão humana antes do efeito
+    peso: 3
+    critico: true
+    pergunta: Antes que o conteúdo gerado produza efeito (sair para cliente, virar documento oficial), alguém revisa?
+    respostas_rapidas: ["Sempre há revisão humana", "Só em alguns casos", "Não há revisão", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: NAO_ATENDE, 2: NAO_ATENDE, 3: LACUNA}
+  - id: C6.1
+    camada: 6
+    texto: Lista fechada de ações e ferramentas, com privilégio mínimo
+    peso: 3
+    critico: true
+    pergunta: Está definido exatamente quais ações e sistemas o agente pode usar, com o mínimo de permissão?
+    respostas_rapidas: ["Lista fechada e mínima", "Lista existe, com acesso amplo", "Não está definido", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: NAO_ATENDE, 2: NAO_ATENDE, 3: LACUNA}
+  - id: C6.2
+    camada: 6
+    texto: Condições de parada e limite de custo por tarefa
+    peso: 2
+    critico: true
+    pergunta: O agente tem limite de passos, de tempo e de gasto por tarefa, e para sozinho ao atingir?
+    respostas_rapidas: ["Sim, com limites definidos", "Só alguns limites", "Não tem limites", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: NAO_ATENDE, 2: NAO_ATENDE, 3: LACUNA}
+  - id: C6.3
+    camada: 6
+    texto: Aprovação humana para ação irreversível
+    peso: 3
+    critico: true
+    pergunta: Quando o sistema vai executar algo que não dá para desfazer, quem aprova antes e como essa aprovação fica registrada?
+    respostas_rapidas: ["Sempre há aprovação humana", "Só em alguns casos", "Não há aprovação", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: NAO_ATENDE, 2: NAO_ATENDE, 3: LACUNA}
+  - id: C6.4
+    camada: 6
+    texto: Rollback e trilha auditável por passo
+    peso: 2
+    critico: true
+    pergunta: Dá para desfazer o que o agente fez e ver, passo a passo, o que ele executou?
+    respostas_rapidas: ["Sim, rollback e trilha por passo", "Só log geral", "Nenhum dos dois", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: NAO_ATENDE, 2: NAO_ATENDE, 3: LACUNA}
+  - id: C6.5
+    camada: 6
+    texto: Nível de autonomia declarado e regra de rebaixamento
+    peso: 2
+    critico: false
+    pergunta: Está escrito até onde o agente pode agir sozinho, e em que situações ele volta a só propor?
+    respostas_rapidas: ["Sim, nível e regras escritos", "Só o nível", "Não está escrito", "Não sei"]
+    mapa_resposta: {0: DECLARADO, 1: NAO_ATENDE, 2: NAO_ATENDE, 3: LACUNA}

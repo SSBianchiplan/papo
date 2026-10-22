@@ -1,0 +1,27 @@
+# Cache por caminho num map: add_header dentro de location faria o nginx descartar os add_header do server
+# (CSP e demais cabeçalhos sumiriam justamente do index.html).
+map $uri $papo_cache {
+  /config.json            "no-store";
+  /sw.js                  "no-cache";
+  /manifest.webmanifest   "no-cache";
+  ~^/assets/              "public, max-age=31536000, immutable";
+  default                 "no-cache";
+}
+
+server {
+  listen 8080;
+  server_tokens off;
+  root /usr/share/nginx/html;
+
+  add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; font-src 'self'; connect-src 'self' ${AUTH_URL} wss://${APP_DOMAIN}; frame-src ${AUTH_URL}; frame-ancestors 'none'; base-uri 'self'; form-action 'self' ${AUTH_URL}; object-src 'none'; worker-src 'self'; manifest-src 'self'" always;
+  add_header X-Content-Type-Options nosniff always;
+  add_header Referrer-Policy strict-origin-when-cross-origin always;
+  add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+  add_header Cache-Control $papo_cache;            # sem "always": um 404 em /assets não fica em cache imutável
+
+  location = /config.json { try_files $uri =404; }
+  # o mime.types do nginx não conhece .webmanifest; com application/octet-stream o Chrome descarta o manifest e não oferece instalar
+  location = /manifest.webmanifest { types { } default_type application/manifest+json; try_files $uri =404; }
+  location /assets/ { try_files $uri =404; }
+  location / { try_files $uri /index.html; }
+}

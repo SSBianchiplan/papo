@@ -1,0 +1,40 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  api:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16.6-alpine
+        env: { POSTGRES_PASSWORD: postgres }
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 10
+      redis:
+        image: redis:7.4.1-alpine
+        ports: ["6379:6379"]
+    env:
+      TEST_PG_ADMIN: postgresql://postgres:postgres@127.0.0.1:5432/postgres
+      TEST_PG_HOST: 127.0.0.1:5432
+      TEST_REDIS_URL: redis://127.0.0.1:6379/9
+      PGPASSWORD: postgres
+    defaults: { run: { working-directory: api } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -e ".[dev]" pytest-cov
+      - run: |
+          psql -h 127.0.0.1 -U postgres -c "CREATE ROLE papo_owner LOGIN PASSWORD 'owner'"
+          psql -h 127.0.0.1 -U postgres -c "CREATE ROLE papo_app LOGIN PASSWORD 'app'"
+      - run: ruff check app tests
+      - run: mypy app
+      - run: pytest -q --cov=app --cov-fail-under=75
+  web:
+    runs-on: ubuntu-24.04
+    defaults: { run: { working-directory: web } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - run: npm ci
+      - run: npm run build

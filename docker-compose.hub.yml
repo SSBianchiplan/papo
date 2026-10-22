@@ -1,0 +1,67 @@
+# Papo atrás de um proxy que já existe no servidor (ex.: hub gplansis.com). O Caddy do host já faz TLS em 80/443 para todos os sites,
+# então o Traefik fica desligado e cada porta pública escuta só em 127.0.0.1 (o Caddy encaminha).
+# Uso: docker compose -f docker-compose.yml -f docker-compose.hub.yml up -d
+# Caddy: infra/caddy/papo.caddy  →  /etc/caddy/papo.caddy
+# .env: AUTH_URL=https://APP_DOMAIN/auth e KC_HTTP_RELATIVE_PATH=/auth (login no mesmo domínio, sem DNS extra)
+# Limites de memória: a VPS é compartilhada com outros sistemas.
+services:
+  traefik:
+    profiles: ["traefik"]          # desligado aqui; nada depende dele
+
+  web:
+    ports: ["127.0.0.1:${PAPO_WEB_PORT:-8991}:8080"]
+    mem_limit: 96m
+
+  api:
+    ports: ["127.0.0.1:${PAPO_API_PORT:-8992}:8000"]
+    mem_limit: 768m
+
+  keycloak:
+    ports: ["127.0.0.1:${PAPO_AUTH_PORT:-8993}:8080"]
+    mem_limit: 1g
+    environment:
+      JAVA_OPTS_KC_HEAP: "-XX:MaxRAMPercentage=65 -XX:InitialRAMPercentage=20"
+      KC_CACHE: local                # nó único: sem cluster JGroups/multicast
+
+  worker:
+    mem_limit: 1g
+
+  # as pastas dos sistemas do servidor entram no gateway só para leitura
+  hubgw:
+    mem_limit: 384m
+    environment:
+      HUBGW_LOCAL_ROOTS: opt=/hub/opt,www=/hub/www
+    volumes:
+      - /opt:/hub/opt:ro
+      - /var/www:/hub/www:ro
+
+  migrate:
+    mem_limit: 256m
+
+  postgres:
+    mem_limit: 768m
+
+  redis:
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "noeviction"]
+    mem_limit: 384m
+
+  # A imagem minio/minio saiu do Docker Hub (e o quay.io exige login). RustFS fala a mesma API S3 e já roda
+  # nesta VPS (VOX). O nome do serviço continua "minio": S3_ENDPOINT e ops/backup.sh não mudam.
+  minio:
+    image: rustfs/rustfs@sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff   # 1.0.0
+    command: ["rustfs"]
+    environment:
+      RUSTFS_ACCESS_KEY: ${MINIO_ROOT_USER}
+      RUSTFS_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+      RUSTFS_VOLUMES: /data
+      RUSTFS_CONSOLE_ENABLE: "false"
+    volumes: [miniodata:/data, miniologs:/logs]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -so /dev/null http://127.0.0.1:9000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    mem_limit: 512m
+
+volumes:
+  miniologs:
